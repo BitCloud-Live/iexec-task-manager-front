@@ -6,3 +6,21 @@ body {
     "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
+
+.typedtext{
+  color: white;
+}
+
+.greenseab {
+  color: lightseagreen;
+}
+
+.btn-flat {
+  background-color: lightseagreen;
+  color: white;
+}
+
+.btn-xxl {
+  padding: 1rem 1.5rem;
+  font-size: 1.5rem;
+}

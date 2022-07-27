@@ -1,24 +1,27 @@
-import React, { CSSProperties } from "react";
+import React from "react";
 import { Container } from "react-bootstrap";
+import TypeAnimation from "react-type-animation";
 
-import { Button } from "@components";
 
 export const Main: React.FC = () => {
   return (
-    <div className="text-center py-4" style={{ backgroundColor: "#282c34" }}>
+    <div className="text-center py-2" style={{ backgroundColor: "#282c34" }}>
       <Container>
-        <h1 className="display-2 text-white">superplate</h1>
+       
+          <TypeAnimation
+            cursor={false}
+            sequence={[`${process.env.siteName}`, 1000, '']}
+            wrapper="h2"
+            className="typedtext"
+          />
+       
+        
         <p className="lead text-white">
-          The frontend boilerplate with superpowers!
+          Manage <b className="greenseab">dApps & Tasks</b> on iExec here ... 
         </p>
-        <Button
-          variant="primary"
-          size="lg"
-          href="https://pankod.github.io/superplate/"
-          target="_blank"
-        >
-          Docs
-        </Button>
+        
+        <blockquote className="text-light">Consider to connect at least one account using your wallet</blockquote>
+        
       </Container>
     </div>
   );

@@ -5,15 +5,15 @@ export const Footer: React.FC = () => {
   return (
     <div className="text-center py-4" style={{ backgroundColor: "#282c34" }}>
       <a
-        href="https://github.com/pankod"
+        href="https://github.com/iExecBlockchainComputing"
         target="_blank"
         className="d-block mb-3"
       >
         <Image
-          src="/icons/pankod-icon.svg"
-          alt="pankod"
+          src="/icons/iexec-logo-dark.png"
+          alt="iexec logo"
           width="140"
-          height="28"
+          height="60"
         />
       </a>
 

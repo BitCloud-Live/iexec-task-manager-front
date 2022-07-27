@@ -1,0 +1,33 @@
+.navBarBrand {
+    color: whitesmoke !important;
+    transition-duration: 1.5s;
+    border: solid 1.5px green;
+    padding: 5px;
+    margin-left: 10px;
+    margin-right: 10px;
+    border-radius: 10px;
+}
+.navBarBrand:hover {
+    transform: scale(1.1);
+    -webkit-transform: scale(1.1);
+    
+}
+.navLinkContainer a {
+    color: whitesmoke !important;
+    transition-duration: 1s;
+    margin-right: 13px;
+    border-radius: 10px;
+    padding: 5px;
+    border-color: lightseagreen;
+}
+.navLinkContainer a b {
+    color: lightseagreen !important;
+}
+.navLinkContainer a:hover {
+    transform: scale(1.05);
+    -webkit-transform: scale(1.05);
+    border: 0.5px solid green;
+}
+.NavBarRoot{
+    min-height: 100px !important;
+}

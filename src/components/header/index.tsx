@@ -1,11 +1,30 @@
-import React from "react";
+import Container from 'react-bootstrap/Container';
+import Nav from 'react-bootstrap/Nav';
+import Navbar from 'react-bootstrap/Navbar';
+import styles from './Header.module.css';
+import Link from 'next/link';
 
-import { Logo } from "@components";
-
-export const Header: React.FC = () => {
+export function Header() {
   return (
-    <div className="text-center" style={{ backgroundColor: "#20232a" }}>
-      <Logo />
-    </div>
+    <Navbar className={styles.NavBarRoot}  bg="dark" expand="lg">
+      <Container>
+        <Navbar.Brand className={styles.navBarBrand} href="/">{process.env.siteName}</Navbar.Brand>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav">
+          <Nav  className={`me-auto ${styles.navLinkContainer}`}>
+            <Link href="/">
+              <a>Explore <b>dApps</b></a>
+            </Link>
+            <Link href="/createorder/">
+             <a>Create <b>Order</b></a>
+            </Link>
+            <Link href="/">
+              <a> About Us</a>
+            </Link>
+          </Nav>
+        </Navbar.Collapse>
+      </Container>
+    </Navbar>
   );
-};
+}
+

@@ -1,7 +1,6 @@
 import React from "react";
-
-import { Base, DynoTable, WalletMain, Main } from "@components";
 import exampleData from "../src/utils/example_data.json";
+import { Base, DynoTable, WalletMain } from "@components";
 import { Web3Provider } from "@ethersproject/providers";
 import {
   Web3ReactProvider,
@@ -12,10 +11,10 @@ function getLibrary(provider: any) {
   library.pollingInterval = 8000;
   return library;
 }
-const Home: React.FC = () => {
+
+const Accounts: React.FC = () => {
   return (
     <Base>
-      <Main />
       <Web3ReactProvider getLibrary={getLibrary}>
         <WalletMain />
       </Web3ReactProvider>
@@ -26,9 +25,8 @@ const Home: React.FC = () => {
             selectable={true}
         />
       </div>
-    
     </Base>
   );
 };
 
-export default Home;
+export default Accounts;

@@ -1,0 +1,15 @@
+
+
+.dynotr {
+    transition: 1s;
+}
+
+.dynotr:hover {
+    color: white !important;
+    background-color: lightseagreen !important;
+    cursor: pointer;
+    transform: scale(1.01);
+}
+
+
+
