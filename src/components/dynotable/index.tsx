@@ -8,19 +8,19 @@ export function DynoTable(props: DynoTablePropsType) {
       <thead>
         <tr>
           {
-            props.headers.map((item) => (
-                <th>{ item }</th>
+            props.headers.map((item, index) => (
+                <th key={index}>{ item }</th>
             ))
           }  
         </tr>
       </thead>
       <tbody>
         {
-            props.rows.map(data => (
-                <tr className={`${styles.dynotr}`}>
+            props.rows.map((data, rowIndex) => (
+                <tr key={rowIndex} className={`${styles.dynotr}`}>
                     {
-                        data.map(subitem => (
-                            <td>{subitem}</td>
+                        data.map((subitem, colIndex) => (
+                            <td key={colIndex}>{subitem}</td>
                         ))
                     }
                 </tr>

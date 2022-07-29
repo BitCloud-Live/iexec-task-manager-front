@@ -1,157 +1,93 @@
-import React from "react";
-import { Container } from "react-bootstrap";
-import Row from "react-bootstrap/Row";
+import React, { useState, useEffect } from "react";
+import { Container, Row, Col } from "react-bootstrap";
 import styles from "./WalletMain.module.css";
-import { Spinner } from "@components/spinner";
-import { useWeb3React, UnsupportedChainIdError } from "@web3-react/core";
-import {
-  NoEthereumProviderError,
-  UserRejectedRequestError as UserRejectedRequestErrorInjected,
-} from "@web3-react/injected-connector";
-import { injected } from "../../utils/connector";
-import { useEagerConnect, useInactiveListener } from "../../utils/hooks";
-
-function getErrorMessage(error: any) {
-  if (error instanceof NoEthereumProviderError) {
-    return "No Ethereum browser extension detected, install MetaMask on desktop or visit from a dApp browser on mobile.";
-  } else if (error instanceof UnsupportedChainIdError) {
-    return "You're connected to an unsupported network.";
-  } else if (error instanceof UserRejectedRequestErrorInjected) {
-    return "Please authorize this website to access your Ethereum account.";
-  } else {
-    console.error(error);
-    return "An unknown error occurred. Check the console for more details.";
-  }
-}
-
-const connectorsByName: { [id: string]: any } = {
-  Injected: injected,
-};
+import Web3Modal from 'web3modal';
+import WalletConnectProvider from '@walletconnect/web3-provider';
+import { providers } from "ethers";
 
 export const WalletMain: React.FC = () => {
-  const context = useWeb3React();
-  const {
-    connector,
-    library,
-    chainId,
-    account,
-    activate,
-    deactivate,
-    active,
-    error,
-  } = context;
 
-  // handle logic to recognize the connector currently being activated
-  const [activatingConnector, setActivatingConnector] = React.useState();
-  React.useEffect(() => {
-    console.log("running");
-    if (activatingConnector && activatingConnector === connector) {
-      setActivatingConnector(undefined);
+  const [web3Modal, setWeb3Modal] = useState<any>(null);
+  const [address, setAddress] = useState<any>("");
+
+
+  useEffect(() => {
+    const providerOptions = {
+      walletconnect: {
+        package: WalletConnectProvider,
+        options: {
+          infuraId: process.env.INFURA_ID,
+        }
+      },
+    };
+
+    const newWeb3Modal = new Web3Modal({
+      cacheProvider: true, // very important
+      network: "mainnet",
+      providerOptions,
+    });
+
+    setWeb3Modal(newWeb3Modal);
+    // alert(localStorage.getItem("WEB3_CONNECT_CACHED_PROVIDER"))
+    
+  }, [])
+
+  useEffect(() => {
+    // connect automatically and without a popup if user is already connected
+    if(web3Modal && web3Modal.cachedProvider){
+      connectWallet()
     }
-  }, [activatingConnector, connector]);
+  }, [web3Modal]);
 
-  // handle logic to eagerly connect to the injected ethereum provider, if it exists and has granted access already
-  const triedEager = useEagerConnect();
+  async function addListeners(web3ModalProvider: any) {
 
-  // handle logic to connect in reaction to certain events on the injected ethereum provider, if it exists
-  useInactiveListener(!triedEager || !!activatingConnector);
+    web3ModalProvider.on("accountsChanged", (_accounts: any) => {
+      window.location.reload()
+    });
+    
+    // Subscribe to chainId change
+    web3ModalProvider.on("chainChanged", (_chainId: any) => {
+      window.location.reload()
+    });
+  }
+
+  async function connectWallet() {
+    const provider = await web3Modal.connect();
+    addListeners(provider);
+    const ethersProvider = new providers.Web3Provider(provider);
+    const userAddress = await ethersProvider.getSigner().getAddress()
+    setAddress(userAddress)
+  }
+
+  function disconnectWallet(){
+    setAddress("");
+    localStorage.removeItem("WEB3_CONNECT_CACHED_PROVIDER");
+  }
 
   return (
     <div className="text-center py-4" style={{ backgroundColor: "#282c34" }}>
       <Container>
         <Row className={styles.connectWalletRow}>
-          <div className="col-6">
-            <q className="text-light">Connect your Metamask wallet</q>
-            {Object.keys(connectorsByName).map((name) => {
-              const currentConnector = connectorsByName[name];
-              const activating = currentConnector === activatingConnector;
-              const connected = currentConnector === connector;
-              const disabled =
-                !triedEager || !!activatingConnector || connected || !!error;
-
-              return (
-                <button
-                  className="btn btn-flat"
-                  style={{
-                    borderRadius: "1rem",
-                    padding: "10px",
-                    borderColor: activating
-                      ? "orange"
-                      : connected
-                      ? "green"
-                      : "unset",
-                    cursor: disabled ? "unset" : "pointer",
-                    position: "relative",
-                  }}
-                  disabled={disabled}
-                  key={name}
-                  onClick={() => {
-                    setActivatingConnector(currentConnector);
-                    activate(connectorsByName[name]);
-                  }}
-                >
-                  <div
-                    style={{
-                      position: "absolute",
-                      top: "0",
-                      left: "0",
-                      height: "100%",
-                      display: "flex",
-                      alignItems: "center",
-                      color: "black",
-                      margin: "0 0 0 1rem",
-                    }}
-                  >
-                    {activating && (
-                      <Spinner
-                        color={"black"}
-                        style={{ height: "25%", marginLeft: "-1rem" }}
-                      />
-                    )}
-                    {connected && (
-                      <span role="img" aria-label="check">
-                        ✅
-                      </span>
-                    )}
-                  </div>
-                  {name}
-                </button>
-              );
-            })}
-          </div>
-
-          <div className="col-6">
-            {(active || error) && (
-              <button
-                style={{
-                  height: "3rem",
-                  marginTop: "2rem",
-                  borderRadius: "1rem",
-                  borderColor: "red",
-                  cursor: "pointer",
-                }}
-                onClick={() => {
-                  deactivate();
-                }}
-              >
-                Deactivate
-              </button>
-            )}
-
-            {!!error && (
-              <h4
-                style={{
-                  marginTop: "1rem",
-                  marginBottom: "0",
-                  color: "whitesmoke",
-                  display: "block",
-                }}
-              >
-                {getErrorMessage(error)}
-              </h4>
-            )}
-            <p className="text-white mt-3">{account}</p>
-          </div>
+          <Col className="mb-2" xs="12">
+            {
+              address.length == 0 && 
+              (
+                <button className="btn btn-flat" onClick={connectWallet}>Connect wallet</button>
+              )
+            }
+              
+          </Col>
+          <Col className="mb-2" xs="12">
+            {
+              address.length > 0 && 
+              (
+                <button className="btn btn-danger" onClick={disconnectWallet}>Disconnect</button>
+              )
+            }
+          </Col>
+          <Col xs="12">
+            <p className="text-white">{address}</p>
+          </Col>
         </Row>
       </Container>
     </div>
